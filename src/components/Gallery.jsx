@@ -1,8 +1,12 @@
 import { useFirestore } from "../hooks/useFirestore";
 import { motion } from "framer-motion";
+import { useRecoilValue } from "recoil";
+import { userState } from "../atoms/userAtom";
 
 function Gallery({ setSelectedImage }) {
-  const { docs } = useFirestore("images");
+  const user = useRecoilValue(userState);
+  const docPath = user ? "users/" + user.uid + "/images" : "public";
+  const { docs } = useFirestore(docPath);
 
   return (
     <motion.div
