@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .error {
+    @apply text-xs text-red-700;
+  }
+
+  .input-field {
+    @apply px-1 border-b border-gray-500 shadow-sm focus:border-b-2 focus:border-gray-700;
+  }
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  outline: none;
+}
+
 body {
   margin: 0;
   font-family: "Merriweather", serif;
