@@ -3,9 +3,13 @@ import { deleteObject, getBlob, ref } from "firebase/storage";
 import { motion } from "framer-motion";
 import { DownloadSimple, Trash } from "phosphor-react";
 import { Tooltip } from "react-tooltip";
+import { useRecoilValue } from "recoil";
+import { userState } from "../atoms/userAtom";
 import { firestore, storage } from "../firebase/config";
 
 function Modal({ selectedImage, setSelectedImage }) {
+  const user = useRecoilValue(userState);
+
   const handleClick = (e) => {
     if (e.target.classList.contains("backdrop")) {
       setSelectedImage(null);
@@ -13,7 +17,9 @@ function Modal({ selectedImage, setSelectedImage }) {
   };
 
   const handleDownload = async () => {
-    const storageRef = ref(storage, selectedImage.name);
+    const storageRef = user
+      ? ref(storage, "users/" + user.uid + "/images/" + selectedImage.name)
+      : ref(storage, "public/" + selectedImage.name);
     const blob = await getBlob(storageRef);
 
     let a = document.createElement("a");
@@ -23,8 +29,12 @@ function Modal({ selectedImage, setSelectedImage }) {
   };
 
   const handleDelete = async () => {
-    await deleteDoc(doc(firestore, "images", selectedImage.id));
-    await deleteObject(ref(storage, selectedImage.name));
+    await deleteDoc(
+      doc(firestore, "users/", user.uid, "images", selectedImage.id)
+    );
+    await deleteObject(
+      ref(storage, "users/" + user.uid + "/images/" + selectedImage.name)
+    );
 
     setSelectedImage(null);
   };
@@ -65,7 +75,9 @@ function Modal({ selectedImage, setSelectedImage }) {
           onClick={handleDelete}
           id="delete-btn"
           data-tooltip-content="Delete"
-          className="bg-red-500 p-1 rounded hover:scale-105"
+          className={`bg-red-500 p-1 rounded hover:scale-105 ${
+            !user ? "hidden" : ""
+          }`}
         >
           <Tooltip anchorId="delete-btn" />
           <Trash size={32} />
