@@ -5,9 +5,9 @@ import { userState } from "../atoms/userAtom";
 import ProgressBar from "./ProgressBar";
 
 function UploadForm() {
+  const user = useRecoilValue(userState);
   const [file, setFile] = useState(null);
   const [error, setError] = useState(null);
-  const user = useRecoilValue(userState);
 
   const types = ["image/png", "image/jpeg"];
 
